@@ -1,2 +1,16 @@
-# PRODIGY_WD_05
-Weather app built for Prodigy WD Task-05 using Open-Meteo (no API key). Supports city search + geolocation, unit toggle, 5-day forecast, caching with offline fallback, accessibility features, and PWA support.
+# Prodigy WD Task-05 — Weather App (Open-Meteo)
+
+Weather app built with HTML/CSS/JavaScript using the Open-Meteo API (no API key).
+
+## Features
+- Search city with suggestions
+- Use my location (geolocation)
+- Current conditions + 5-day forecast
+- °C/°F toggle + wind conversion
+- localStorage caching + offline fallback banner
+- Debounced search + AbortController
+- PWA (manifest + service worker)
+
+## Run locally
+```bash
+python -m http.server 8003
