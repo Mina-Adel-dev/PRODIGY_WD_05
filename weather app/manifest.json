@@ -1,0 +1,20 @@
+{
+    "name": "WeatherWise",
+    "short_name": "WeatherWise",
+    "description": "Real-time weather forecasts with geolocation support",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#4361ee",
+    "theme_color": "#4361ee",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%234361ee%22>🌤️</text></svg>",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ],
+    "categories": ["weather", "productivity", "utilities"],
+    "lang": "en",
+    "dir": "ltr"
+}

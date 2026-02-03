@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherWise | Real-time Weather Forecast</title>
+    <meta name="description" content="Real-time weather forecasts with geolocation support">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌤️</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌤️</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1 class="app-title">
+                <span aria-hidden="true">🌤️</span>
+                WeatherWise
+            </h1>
+            <p class="app-subtitle">Real-time weather forecasts at your fingertips</p>
+        </header>
+
+        <main class="main-content">
+            <div class="weather-search-container">
+                <div class="search-section">
+                    <div class="search-input-group">
+                        <div class="search-wrapper">
+                            <input 
+                                type="text" 
+                                id="city-search" 
+                                class="city-search-input" 
+                                placeholder="Search for a city..." 
+                                aria-label="Search for a city"
+                                autocomplete="off"
+                            >
+                            <div id="search-suggestions" class="search-suggestions" aria-live="polite"></div>
+                        </div>
+                        <button id="search-btn" class="search-btn" aria-label="Search for weather">
+                            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="search-quick-access" id="search-quick-access">
+                        <!-- Recent searches and favorites will be injected here -->
+                    </div>
+                </div>
+                
+                <div class="location-buttons">
+                    <button id="location-btn" class="location-btn">
+                        <svg class="location-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+                        </svg>
+                        Use My Location
+                    </button>
+                    
+                    <div class="action-buttons">
+                        <button id="save-favorite-btn" class="save-favorite-btn" title="Save current location to favorites" aria-label="Save current location to favorites">
+                            <svg class="favorite-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="units-toggle">
+                            <button id="units-toggle" class="units-toggle-btn" aria-label="Toggle temperature units">
+                                <span class="unit-active">°C</span>
+                                <span class="unit-inactive">°F</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banner element with improved accessibility -->
+            <div id="banner" class="banner" aria-live="assertive" aria-atomic="true" hidden>
+                <span id="banner-text" class="banner-text"></span>
+                <button id="banner-close" class="banner-close" aria-label="Dismiss message">×</button>
+            </div>
+
+            <div id="loading" class="loading-container" aria-live="assertive" aria-busy="true" hidden>
+                <div class="loading-spinner" aria-hidden="true"></div>
+                <p class="loading-text">Fetching weather data...</p>
+            </div>
+
+            <div id="error" class="error-container" aria-live="assertive" hidden>
+                <div class="error-icon" aria-hidden="true">⚠️</div>
+                <h2 class="error-title" id="error-title"></h2>
+                <p class="error-message" id="error-message"></p>
+                <button id="retry-btn" class="retry-btn">Try Again</button>
+            </div>
+
+            <div id="weather-display" class="weather-display" hidden>
+                <div class="current-weather-section">
+                    <div class="location-info">
+                        <h2 id="location-name" class="location-name"></h2>
+                        <p id="location-country" class="location-country"></p>
+                        <p id="last-updated" class="last-updated"></p>
+                    </div>
+                    
+                    <div class="current-weather-main">
+                        <div class="temperature-display">
+                            <div class="current-temp-container">
+                                <span id="current-temp" class="current-temp"></span>
+                                <span id="temp-unit" class="temp-unit">°C</span>
+                            </div>
+                            <p id="weather-condition" class="weather-condition"></p>
+                        </div>
+                        <div id="weather-icon" class="weather-icon" aria-hidden="true"></div>
+                    </div>
+                    
+                    <div class="weather-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Feels Like</span>
+                            <span id="feels-like" class="detail-value"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Humidity</span>
+                            <span id="humidity" class="detail-value"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Wind</span>
+                            <span id="wind-speed" class="detail-value"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Wind Direction</span>
+                            <span id="wind-direction" class="detail-value"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="forecast-section">
+                    <h3 class="forecast-title">5-Day Forecast</h3>
+                    <div id="forecast-cards" class="forecast-cards"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>Powered by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>
+                <p class="cache-info">Cached data: <span id="cache-status">Not available</span></p>
+                <button id="clear-cache-btn" class="clear-cache-btn">Clear Cache</button>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(error => {
+                    console.log('ServiceWorker registration failed:', error);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
